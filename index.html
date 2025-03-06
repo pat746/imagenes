@@ -4,120 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tomar y Subir Foto</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        h2 {
-            margin-top: 20px;
-        }
-
-        video, img {
-            width: 90%;
-            max-width: 400px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        button {
-            display: block;
-            width: 90%;
-            max-width: 300px;
-            margin: 10px auto;
-            padding: 12px;
-            font-size: 16px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #reintentar {
-            background-color: #dc3545;
-            display: none; /* Oculto por defecto */
-        }
-
-        #reintentar:hover {
-            background-color: #c82333;
-        }
-
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-    </style>
 </head>
 <body>
     <h2>Tomar una Foto y Subirla</h2>
 
-    <video id="video" autoplay playsinline></video>
-    <button id="capturar">📸 Tomar Foto</button>
+    <video id="video" width="320" height="240" autoplay></video>
+    <button id="capturar">Tomar Foto</button>
     <canvas id="canvas" style="display: none;"></canvas>
     <img id="foto" src="" alt="Foto Capturada">
-
-    <button type="button" id="reintentar">🔄 Reintentar</button>
 
     <form id="formulario">
         <label for="nombreImagen">Nombre de la imagen:</label>
         <input type="text" id="nombreImagen" placeholder="Ejemplo: mi_foto">
-
+        
         <input type="hidden" name="imagen" id="imagenBase64">
-        <button type="button" id="subir">🚀 Subir Imagen</button>
+        <button type="button" id="subir">Subir Imagen</button>
     </form>
 
     <script>
+        // Acceder a la cámara
         const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        const foto = document.getElementById('foto');
-        const imagenBase64Input = document.getElementById('imagenBase64');
-        const reintentarBtn = document.getElementById('reintentar');
-
-        // Acceder a la cámara trasera en móviles
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => { video.srcObject = stream; })
             .catch(err => console.log("Error al acceder a la cámara:", err));
 
         // Capturar la foto
         document.getElementById('capturar').addEventListener('click', function () {
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Convertir la imagen a Base64 y mostrarla
+            // Convertir a Base64 y mostrar la imagen
             const imagenBase64 = canvas.toDataURL("image/png");
-            foto.src = imagenBase64;
-            imagenBase64Input.value = imagenBase64;
-
-            // Mostrar el botón de reintentar
-            reintentarBtn.style.display = "block";
+            document.getElementById('foto').src = imagenBase64;
+            document.getElementById('imagenBase64').value = imagenBase64;
         });
 
-        // Reintentar la captura
-        reintentarBtn.addEventListener('click', function () {
-            foto.src = "";  // Borra la imagen capturada
-            imagenBase64Input.value = ""; // Limpia el input
-            this.style.display = "none";  // Oculta el botón de reintentar
-        });
-
-        // Subir la imagen al servidor
+        // Subir la imagen al servidor usando fetch
         document.getElementById('subir').addEventListener('click', function () {
             const nombreImagen = document.getElementById('nombreImagen').value.trim();
-            const imagenBase64 = imagenBase64Input.value;
+            const imagenBase64 = document.getElementById('imagenBase64').value;
 
             if (!nombreImagen) {
                 alert("⚠️ Debes ingresar un nombre para la imagen.");
@@ -139,4 +67,4 @@
         });
     </script>
 </body>
-</html>
+</html>  

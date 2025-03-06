@@ -4,7 +4,7 @@ require_once './config/database.php'; // Conexión a la base de datos
 
 use Google\Cloud\Storage\StorageClient;
 
-putenv('GOOGLE_APPLICATION_CREDENTIALS=config/credenciales.json');
+putenv('GOOGLE_APPLICATION_CREDENTIALS=config/credencial.json');
 
 // Verificar conexión a la base de datos
 if (!isset($pdo)) {
